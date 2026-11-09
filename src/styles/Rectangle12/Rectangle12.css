@@ -1,0 +1,12 @@
+@import '../tokens.css';
+
+.rectangle-12 {
+  position: relative;
+  box-sizing: border-box;
+  width: 67px;
+  height: 26px;
+  flex: none;
+  overflow: clip;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-tag-background);
+}

@@ -1,122 +1,43 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useEffect } from 'react'
+import ComponentGallery from './components/ComponentGallery'
+import ChooseService from './pages/ChooseService/ChooseService'
+import PickSlot from './pages/PickSlot/PickSlot'
+import ConfirmBooking from './pages/ConfirmBooking/ConfirmBooking'
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const path = window.location.pathname.replace(/\/$/, '')
+  const titles: Record<string, string> = {
+    '/choose-service': 'Choose a service',
+    '/pick-slot': 'Pick a drop-off time',
+    '/confirm': 'Check and confirm',
+  }
+  const title = titles[path] ?? 'Components'
 
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+  useEffect(() => {
+    document.title = `${title} · Spoke`
+  }, [title])
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+  if (path === '/choose-service') {
+    return <ChooseService onContinue={service => {
+      const url = new URL('/pick-slot', window.location.origin)
+      const currentParams = new URLSearchParams(window.location.search)
+      url.searchParams.set('service', service.id)
+      for (const key of ['day', 'time']) {
+        const value = currentParams.get(key)
+        if (value) url.searchParams.set(key, value)
+      }
+      window.location.assign(url)
+    }} />
+  }
+  if (path === '/pick-slot') {
+    return <PickSlot onContinue={({ service, day, time }) => {
+      const url = new URL('/confirm', window.location.origin)
+      url.searchParams.set('service', service.id)
+      url.searchParams.set('day', day)
+      url.searchParams.set('time', time)
+      window.location.assign(url)
+    }} />
+  }
+  if (path === '/confirm') return <ConfirmBooking />
+  return <ComponentGallery />
 }
-
-export default App

@@ -1,0 +1,13 @@
+.spoke-tag {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  padding: var(--space-4) var(--space-12);
+  border-radius: var(--radius-pill);
+  background: var(--color-tag-background);
+  color: var(--color-tag-text);
+  font: 500 13px/18px 'Inter', sans-serif;
+  white-space: nowrap;
+}
+
+.spoke-tag { box-sizing: border-box; min-width: 67px; }
